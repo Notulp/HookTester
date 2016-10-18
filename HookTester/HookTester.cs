@@ -134,13 +134,9 @@ namespace HookTester
 
         public void On_NPCHurt(NPCHurtEvent he)
         {
-            if (he.Attacker != null)
+            if (he.Attacker != null && he.Attacker.IsPlayer())
             {
                 Server.Broadcast(he.Victim.Name + " has been hurt by " + he.Attacker.Name);
-            }
-            else
-            {
-                Server.Broadcast(he.Victim.Name + " has been hurt");
             }
         }
 
