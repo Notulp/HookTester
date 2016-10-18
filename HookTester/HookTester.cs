@@ -69,7 +69,7 @@ namespace HookTester
 
         public void On_CorpseHurt(HurtEvent he)
         {
-            Server.Broadcast(he.Attacker + " attacked a corpse with " + he.Weapon);
+            Server.Broadcast(he.Attacker.Name + " attacked a corpse with " + he.Weapon.Name);
         }
 
         public void On_DoorCode(DoorCodeEvent dce)
