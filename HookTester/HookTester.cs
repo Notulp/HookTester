@@ -152,17 +152,16 @@ namespace HookTester
 
         public void On_PlayerAssisted(Player player)
         {
-            player.Message("Lucky you ! Somebody cured your wounds");
+            player.Message("Somebody cured your wounds");
         }
 
         public void On_PlayerClothingChanged(PlayerClothingEvent pce)
         {
-            pce.Player.Message("You look so sexy now !");
+            pce.Player.Message("Your clothing has been changed");
         }
 
         public void On_PlayerConnected(Player player)
         {
-            player.Message("Welcome to our Server!");
             Server.Broadcast(player.Name + " has joined the Server!");
         }
 
@@ -202,16 +201,13 @@ namespace HookTester
 
         public void On_PlayerHurt(PlayerHurtEvent phe)
         {
-            if (phe.Attacker.IsPlayer())
+            if (phe.Attacker != null)
             {
-                Player attacker = phe.Attacker.ToPlayer();
-                Player victim = phe.Victim;
-                attacker.Message("You hit the player " + victim.Name);
-                victim.Message("You got hit by the player " + attacker.Name);
+                phe.Victim.Message("You got hit by " + phe.Attacker.Name);
             }
             else
             {
-                phe.Victim.Message("You got hit by a " + phe.Attacker.Name);
+                phe.Victim.Message("You got hit by something");
             }
         }
 
@@ -302,7 +298,7 @@ namespace HookTester
 
         public void On_Shooting(ShootEvent se)
         {
-            Server.Broadcast(se.Player.Name + " just shot ");
+            Server.Broadcast(se.Player.Name + " just shot " + se.BaseProjectile.ShortPrefabName);
         }
 
         public void On_WeaponThrow(WeaponThrowEvent wte)
