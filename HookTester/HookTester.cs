@@ -21,12 +21,99 @@ namespace HookTester
         private const string SUCCESS = "[Success]";
         private const string FAIL = "[Fail]   ";
 
-		public void On_AllPluginsLoaded()
-		{
-			Server.Broadcast("All plugins loaded");
-		}
+        #region Plugin Initialization
 
-		public void On_BeingHammered(HammerEvent he)
+        public void On_PluginInit()
+        {
+            // Creating a copy of the full list of hook names
+            NotWorkingHooks = Hooks.GetInstance().HookNames.ToList();
+
+            // Remove the ones that we can't programmatically test, from a command
+            NotWorkingHooks.Remove("On_PluginInit");
+            NotWorkingHooks.Remove("On_PluginDeinit");
+            NotWorkingHooks.Remove("On_AllPluginsLoaded");
+
+            NotWorkingHooks.Remove("On_ServerInit");
+            NotWorkingHooks.Remove("On_ServerShutdown");
+
+            NotWorkingHooks.Remove("On_PlayerConnected");
+            NotWorkingHooks.Remove("On_PlayerDisconnected");
+
+            NotWorkingHooks.Remove("On_PlayerLoaded"); // ?
+
+            Server.Broadcast("HookTester Initialized");
+        }
+
+        public void On_AllPluginLoaded()
+        {
+            NotWorkingHooks.Remove("On_AllPluginLoaded");
+
+            Server.Broadcast("All plugins loaded");
+        }
+
+        public void On_PluginDeinit()
+        {
+            NotWorkingHooks.Remove("On_PluginDeinit");
+
+            Server.Broadcast("HookTester deinitialized");
+        }
+
+        #endregion
+
+        #region Hook Testing
+
+        public void On_Command(CommandEvent ce)
+        {
+            NotWorkingHooks.Remove("On_Command");
+
+            if (ce.Cmd == "test" && ce.User.Admin)
+            {
+                Server.BroadcastFrom("Pluton Tester", "Initiating funcionality test.");
+
+                Server.Broadcast("#" + NotWorkingHooks.Count + " hooks to be tested...");
+
+                try
+                {
+                    TestChicken = World.SpawnAnimal("chicken", ce.User.X, ce.User.Z) as BaseNPC;
+                    TestChicken.Hurt(new HitInfo(TestChicken, TestChicken, DamageType.Bite, 1));
+                    TestChicken.Die(new HitInfo(TestChicken, TestChicken, DamageType.Bite, 999));
+
+                    TestBot = World.SpawnMapEntity("assets/prefabs/player/player.prefab", ce.User.X, ce.User.Z) as BasePlayer;
+                    TestBot.StartSleeping();
+                    TestBot.EndSleeping();
+                    TestBot.Hurt(new HitInfo(TestBot, TestBot, DamageType.Bite, 1));
+                    TestBot.UpdateRadiation(1);
+                    TestBot.UpdateRadiation(0);
+                    TestBot.RespawnAt(ce.User.Location, default(Quaternion));
+
+                    ce.User.SendConsoleCommand("testing");
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex);
+                }
+
+                Plugin.CreateTimer("ProbablyTestsFinished", 5000, OutputResults).Start();
+            }
+        }
+
+	    private void OutputResults(TimedEvent timedEvent)
+        {
+            Console.WriteLine(NotWorkingHooks.Count + " Hooks not working : ");
+
+            foreach (string hook in NotWorkingHooks)
+            {
+                Console.WriteLine(hook);
+            }
+
+            timedEvent.Kill();
+        }
+
+        #endregion
+
+        #region Test Hooks
+
+        public void On_BeingHammered(HammerEvent he)
 		{
 			Server.Broadcast(he.Victim.Name + " got hammered by " + he.Player.Name);
 		}
@@ -64,57 +151,6 @@ namespace HookTester
 		public void On_CombatEntityHurt(CombatEntityHurtEvent cehe)
 		{
 			Server.Broadcast(cehe.Attacker.Name + " attacked " + cehe.Victim.Name);
-		}
-
-		public void On_Command(CommandEvent ce)
-		{
-			if (ce.Cmd == "test" && ce.User.Admin)
-			{
-				// put all hook names 1st, remove them if they turn out to be working
-				NotWorkingHooks = Hooks.GetInstance().HookNames;
-
-				// since this hook works, remove it in advance
-				NotWorkingHooks.Remove("On_Command");
-
-				// remove the ones that we can't programmatically test, from a command
-				NotWorkingHooks.Remove("On_PlayerConnected");
-				NotWorkingHooks.Remove("On_PlayerDisconnected");
-				NotWorkingHooks.Remove("On_ServerInit");
-				NotWorkingHooks.Remove("On_ServerShutdown");
-				NotWorkingHooks.Remove("On_PluginInit");
-				NotWorkingHooks.Remove("On_PluginDeinit");
-				NotWorkingHooks.Remove("On_AllPluginsLoaded");
-				NotWorkingHooks.Remove("On_PlayerLoaded"); // ?
-
-				Server.BroadcastFrom("Pluton Tester", "Initiating funcionality test.");
-
-				Server.Broadcast("#" + NotWorkingHooks.Count + " hooks to be tested...");
-
-				try
-				{
-					testchicken = World.SpawnAnimal("chicken", ce.User.X, ce.User.Z) as BaseNPC;
-					testchicken.Hurt(new HitInfo(testchicken, testchicken, Rust.DamageType.Bite, 1));
-
-					testbot = World.SpawnMapEntity("assets/prefabs/player/player.prefab", ce.User.X, ce.User.Z) as BasePlayer;
-					testbot.StartSleeping();
-					testbot.EndSleeping();
-					testbot.Hurt(new HitInfo(testbot, testbot, Rust.DamageType.Bite, 1));
-					testbot.UpdateRadiation(1);
-					testbot.UpdateRadiation(0);
-					testbot.RespawnAt(ce.User.Location, default(Quaternion));
-
-					ce.User.SendConsoleCommand("testing");
-				}
-				catch (System.Exception ex)
-				{
-					Pluton.Core.Logger.LogException(ex);
-				}
-				Plugin.CreateTimer("ProbablyTestsFinished", 3000, (a) =>
-				{
-					System.Console.WriteLine("The not working/tested hooks are(" + NotWorkingHooks.Count + "): " + string.Join(", ", NotWorkingHooks.ToArray()));
-					a.Kill();
-				}).Start();
-			}
 		}
 
 		public void On_CommandPermission(CommandPermissionEvent cpe)
@@ -198,14 +234,13 @@ namespace HookTester
 			{
 				if (he.Attacker?.baseEntity == TestChicken && he.Victim?.baseEntity == TestChicken)
 				{
-					// Server.BroadcastFrom(success, "The chicken hurt itself. (On_NPCHurt)");
 					NotWorkingHooks.Remove("On_NPCHurt");
-					he.Victim.Kill();
-				}
-			}
-			catch (System.Exception ex)
+                    // Server.BroadcastFrom(SUCCESS, "The chicken hurt itself. (On_NPCHurt)");
+                }
+            }
+			catch (Exception ex)
 			{
-				Pluton.Core.Logger.LogException(ex);
+				Logger.LogException(ex);
 			}
 		}
 
@@ -214,7 +249,7 @@ namespace HookTester
 			if (de.Attacker?.baseEntity == TestChicken && de.Victim?.baseEntity == TestChicken)
 			{
 				NotWorkingHooks.Remove("On_NPCKilled");
-				//Server.BroadcastFrom(success, "The chicken died. (On_NPCDied)");
+				//Server.BroadcastFrom(SUCCESS, "The chicken died. (On_NPCDied)");
 			}
 		}
 
@@ -229,7 +264,6 @@ namespace HookTester
 			{
 				NotWorkingHooks.Remove("On_PlayerAssisted");
 			}
-			// player.Message("Lucky you ! Somebody cured your wounds");
 			player.Message("Somebody cured your wounds");
 		}
 
@@ -270,17 +304,6 @@ namespace HookTester
 			{
 				NotWorkingHooks.Remove("On_PlayerHealthChange");
 			}
-			/*
-            Player player = phce.Player;
-
-            if (phce.OldHealth < phce.NewHealth)
-            {
-                player.Message("You have gained some health :)");
-            }
-            else
-            {
-                player.Message("You lost some health :(");
-            }*/
 		}
 
 		public void On_PlayerHurt(PlayerHurtEvent phe)
@@ -288,10 +311,10 @@ namespace HookTester
 			if (phe.Victim?.basePlayer == TestBot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
 			{
 				NotWorkingHooks.Remove("On_PlayerHurt");
-				testbot.StartWounded();
-				testbot.StopWounded();
-				testbot.Kill();
-				// Server.BroadcastFrom(success, "On_PlayerHurt");
+				TestBot.StartWounded();
+				TestBot.StopWounded();
+				TestBot.Kill();
+				// Server.BroadcastFrom(SUCCESS, "On_PlayerHurt");
 			}
 			if (phe.Attacker != null)
 			{
@@ -304,8 +327,9 @@ namespace HookTester
 		}
 
 		public void On_PlayerLoaded(Player player)
-		{
-			player.Message("You're loaded.");
+        {
+            NotWorkingHooks.Remove("On_PlayerLoaded");
+            player.Message("You're loaded.");
 		}
 
 		public void On_PlayerSleep(Player player)
@@ -360,16 +384,6 @@ namespace HookTester
 			}
 		}
 
-		public void On_PluginDeinit()
-		{
-			Server.Broadcast("HookTester deinitialized");
-		}
-
-		public void On_PluginInit()
-		{
-			Server.Broadcast("HookTester initialized");
-		}
-
 		public void On_QuarryMining(MiningQuarry mq)
 		{
 			Server.Broadcast(mq.ShortPrefabName + " mined");
@@ -420,4 +434,6 @@ namespace HookTester
 			Server.Broadcast(wte.Player.Name + " threw a " + wte.Weapon.ShortPrefabName);
 		}
 	}
+
+    #endregion
 }
