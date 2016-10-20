@@ -104,17 +104,17 @@ namespace HookTester
 
         public void On_LandmineArmed(Landmine l)
         {
-            Server.Broadcast(l.name + " has been armed");
+            Server.Broadcast("Landmine has been armed");
         }
 
         public void On_LandmineExploded(Landmine l)
         {
-            Server.Broadcast(l.name + " has exploded");
+            Server.Broadcast("Landmine has exploded");
         }
 
         public void On_LandmineTriggered(LandmineTriggerEvent lte)
         {
-            Server.Broadcast(lte.Landmine + " has been triggered by " + lte.Player.Name);
+            Server.Broadcast("Landmine has been triggered by " + lte.Player.Name);
         }
 
         public void On_LootingEntity(EntityLootEvent ele)
