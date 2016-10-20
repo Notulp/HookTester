@@ -281,12 +281,13 @@ namespace HookTester
         public void On_PlayerHurt(PlayerHurtEvent phe)
         {
 			if (phe.Victim?.basePlayer == testbot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
-            {
+			{
 				NotWorkingHooks.Remove("On_PlayerHurt");
 				testbot.StartWounded();
 				testbot.StopWounded();
 				testbot.Kill();
 				// Server.BroadcastFrom(success, "On_PlayerHurt");
+			}
             if (phe.Attacker != null)
             {
                 phe.Victim.Message("You got hit by " + phe.Attacker.Name);
