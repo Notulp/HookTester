@@ -2,11 +2,21 @@ using Pluton.Core;
 using Pluton.Rust.Events;
 using Pluton.Rust.Objects;
 using Pluton.Rust.PluginLoaders;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace HookTester
 {
     public class HookTester : CSharpPlugin
     {
+		BaseNPC testchicken;
+		BasePlayer testbot;
+
+		List<string> NotWorkingHooks = new List<string>();
+
+		string success = "[Success]";
+		string fail = 	 "[Fail]   ";
+
         public void On_AllPluginsLoaded()
         {
             Server.Broadcast("All plugins loaded");
@@ -54,7 +64,51 @@ namespace HookTester
 
         public void On_Command(CommandEvent ce)
         {
-            Server.Broadcast(ce.User.Name + " used the command " + ce.Cmd + " with arguments " + ce.Args);
+			if (ce.Cmd == "test" && ce.User.Admin) {
+				// put all hook names 1st, remove them if they turn out to be working
+				NotWorkingHooks = Hooks.GetInstance().HookNames;
+
+				// since this hook works, remove it in advance
+				NotWorkingHooks.Remove("On_Command");
+
+				// remove the ones that we can't programmatically test, from a command
+				NotWorkingHooks.Remove("On_PlayerConnected");
+				NotWorkingHooks.Remove("On_PlayerDisconnected");
+				NotWorkingHooks.Remove("On_ServerInit");
+				NotWorkingHooks.Remove("On_ServerShutdown");
+				NotWorkingHooks.Remove("On_PluginInit");
+				NotWorkingHooks.Remove("On_PluginDeinit");
+				NotWorkingHooks.Remove("On_AllPluginsLoaded");
+				NotWorkingHooks.Remove("On_PlayerLoaded"); // ?
+
+				Server.BroadcastFrom("Pluton Tester", "Initiating funcionality test.");
+
+				Server.Broadcast("#" + NotWorkingHooks.Count + " hooks to be tested...");
+
+				try
+				{
+					testchicken = World.SpawnAnimal("chicken", ce.User.X, ce.User.Z) as BaseNPC;
+					testchicken.Hurt(new HitInfo(testchicken, testchicken, Rust.DamageType.Bite, 1));
+
+					testbot = World.SpawnMapEntity("assets/prefabs/player/player.prefab", ce.User.X, ce.User.Z) as BasePlayer;
+					testbot.StartSleeping();
+					testbot.EndSleeping();
+					testbot.Hurt(new HitInfo(testbot, testbot, Rust.DamageType.Bite, 1));
+					testbot.UpdateRadiation(1);
+					testbot.UpdateRadiation(0);
+					testbot.RespawnAt(ce.User.Location, default(Quaternion));
+
+					ce.User.SendConsoleCommand("testing");
+				}
+				catch (System.Exception ex)
+				{
+					Pluton.Core.Logger.LogException(ex);
+				}
+				Plugin.CreateTimer("ProbablyTestsFinished", 3000, (a) => {
+					System.Console.WriteLine("The not working/tested hooks are(" + NotWorkingHooks.Count + "): " + string.Join(", ", NotWorkingHooks.ToArray()));
+					a.Kill();
+				}).Start();
+			}
         }
 
         public void On_CommandPermission(CommandPermissionEvent cpe)
@@ -134,15 +188,28 @@ namespace HookTester
 
         public void On_NPCHurt(NPCHurtEvent he)
         {
-            if (he.Attacker != null && he.Attacker.IsPlayer())
-            {
-                Server.Broadcast(he.Victim.Name + " has been hurt by " + he.Attacker.Name);
-            }
+			try
+			{
+				if (he.Attacker?.baseEntity == testchicken && he.Victim?.baseEntity == testchicken)
+				{
+					// Server.BroadcastFrom(success, "The chicken hurt itself. (On_NPCHurt)");
+					NotWorkingHooks.Remove("On_NPCHurt");
+					he.Victim.Kill();
+				}
+			}
+			catch (System.Exception ex)
+			{
+				Pluton.Core.Logger.LogException(ex);
+			}
         }
 
         public void On_NPCKilled(NPCDeathEvent de)
         {
-            Server.Broadcast(de.Victim.Name + " has been killed by " + de.Attacker.Name);
+			if (de.Attacker?.baseEntity == testchicken && de.Victim?.baseEntity == testchicken)
+			{
+				NotWorkingHooks.Remove("On_NPCKilled");
+				//Server.BroadcastFrom(success, "The chicken died. (On_NPCDied)");
+			}
         }
 
         public void On_Placement(BuildingEvent be)
@@ -152,7 +219,11 @@ namespace HookTester
 
         public void On_PlayerAssisted(Player player)
         {
-            player.Message("Lucky you ! Somebody cured your wounds");
+			if (player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerAssisted");
+			}
+            // player.Message("Lucky you ! Somebody cured your wounds");
         }
 
         public void On_PlayerClothingChanged(PlayerClothingEvent pce)
@@ -168,11 +239,12 @@ namespace HookTester
 
         public void On_PlayerDied(PlayerDeathEvent pde)
         {
-            if (pde.Attacker.IsPlayer())
-            {
-                Player attacker = pde.Attacker.ToPlayer();
+			if (pde.Attacker?.baseEntity == testbot && pde.Victim?.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerDied");
+                /*Player attacker = pde.Attacker.ToPlayer();
                 Server.Broadcast(pde.Victim.Name + " was killed by " + attacker.Name);
-                World.SpawnAnimal("wolf", pde.Victim.Location);
+                World.SpawnAnimal("wolf", pde.Victim.Location);*/
             }
         }
 
@@ -188,6 +260,11 @@ namespace HookTester
 
         public void On_PlayerHealthChange(PlayerHealthChangeEvent phce)
         {
+			if (phce.Player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerHealthChange");
+			}
+			/*
             Player player = phce.Player;
 
             if (phce.OldHealth < phce.NewHealth)
@@ -197,21 +274,18 @@ namespace HookTester
             else
             {
                 player.Message("You lost some health :(");
-            }
+            }*/
         }
 
         public void On_PlayerHurt(PlayerHurtEvent phe)
         {
-            if (phe.Attacker.IsPlayer())
+			if (phe.Victim?.basePlayer == testbot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
             {
-                Player attacker = phe.Attacker.ToPlayer();
-                Player victim = phe.Victim;
-                attacker.Message("You hit the player " + victim.Name);
-                victim.Message("You got hit by the player " + attacker.Name);
-            }
-            else
-            {
-                phe.Victim.Message("You got hit by a " + phe.Attacker.Name);
+				NotWorkingHooks.Remove("On_PlayerHurt");
+				testbot.StartWounded();
+				testbot.StopWounded();
+				testbot.Kill();
+				// Server.BroadcastFrom(success, "On_PlayerHurt");
             }
         }
 
@@ -222,7 +296,11 @@ namespace HookTester
 
         public void On_PlayerSleep(Player player)
         {
-            Server.Broadcast(player.Name + " is going back to sleep!");
+			if (player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerSleep");
+				Server.Broadcast(player.Name + " is going back to sleep!");
+			}
         }
 
         public void On_PlayerStartCrafting(CraftEvent ce)
@@ -242,17 +320,30 @@ namespace HookTester
 
         public void On_PlayerTakeRadiation(PlayerTakeRadsEvent ptre)
         {
+			if (ptre.Victim?.basePlayer == testbot)
+			{
+				if (NotWorkingHooks.Contains("On_PlayerTakeRadiation"))
+					NotWorkingHooks.Remove("On_PlayerTakeRadiation");
+			}
             Server.Broadcast(ptre.Victim.Name + " has taken " + ptre.RadAmount + " radiation");
         }
 
         public void On_PlayerWakeUp(Player player)
         {
-            player.Message(player.Name + " just woke up");
+			if (player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerWakeUp");
+				player.Message(player.Name + " just woke up");
+			}
         }
 
         public void On_PlayerWounded(Player player)
         {
-            player.Message(player.Name + " is wounded !");
+			if (player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_PlayerWounded");
+				player.Message(player.Name + " is wounded !");
+			}
         }
 
         public void On_PluginDeinit()
@@ -272,6 +363,11 @@ namespace HookTester
 
         public void On_Respawn(RespawnEvent re)
         {
+			if (re.Player.basePlayer == testbot)
+			{
+				NotWorkingHooks.Remove("On_Respawn");
+				re.GiveDefault = false;
+			}
             Server.Broadcast(re.Player.Name + " respawned on " + re.SpawnPos);
         }
 
@@ -287,7 +383,7 @@ namespace HookTester
 
         public void On_ServerInit()
         {
-            Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
+            Pluton.Core.Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
         }
 
         public void On_ServerSaved()
@@ -297,7 +393,7 @@ namespace HookTester
 
         public void On_ServerShutdown()
         {
-            Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
+			Pluton.Core.Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
         }
 
         public void On_Shooting(ShootEvent se)
