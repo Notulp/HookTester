@@ -4,6 +4,7 @@ using Pluton.Rust.Objects;
 using Pluton.Rust.PluginLoaders;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace HookTester
 {
@@ -219,15 +220,12 @@ namespace HookTester
 
         public void On_PlayerAssisted(Player player)
         {
-<<<<<<< HEAD
 			if (player.basePlayer == testbot)
 			{
 				NotWorkingHooks.Remove("On_PlayerAssisted");
 			}
             // player.Message("Lucky you ! Somebody cured your wounds");
-=======
             player.Message("Somebody cured your wounds");
->>>>>>> origin/master
         }
 
         public void On_PlayerClothingChanged(PlayerClothingEvent pce)
@@ -282,7 +280,6 @@ namespace HookTester
 
         public void On_PlayerHurt(PlayerHurtEvent phe)
         {
-<<<<<<< HEAD
 			if (phe.Victim?.basePlayer == testbot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
             {
 				NotWorkingHooks.Remove("On_PlayerHurt");
@@ -290,7 +287,6 @@ namespace HookTester
 				testbot.StopWounded();
 				testbot.Kill();
 				// Server.BroadcastFrom(success, "On_PlayerHurt");
-=======
             if (phe.Attacker != null)
             {
                 phe.Victim.Message("You got hit by " + phe.Attacker.Name);
@@ -298,7 +294,6 @@ namespace HookTester
             else
             {
                 phe.Victim.Message("You got hit by something");
->>>>>>> origin/master
             }
         }
 
