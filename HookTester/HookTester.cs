@@ -5,18 +5,21 @@ using Pluton.Rust.PluginLoaders;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
+using Rust;
+using Logger = Pluton.Core.Logger;
 
 namespace HookTester
 {
 	public class HookTester : CSharpPlugin
 	{
-		BaseNPC testchicken;
-		BasePlayer testbot;
+		private BaseNPC TestChicken;
+        private BasePlayer TestBot;
 
-		List<string> NotWorkingHooks = new List<string>();
+        private List<string> NotWorkingHooks = new List<string>();
 
-		string success = "[Success]";
-		string fail = "[Fail]   ";
+        private const string SUCCESS = "[Success]";
+        private const string FAIL = "[Fail]   ";
 
 		public void On_AllPluginsLoaded()
 		{
@@ -193,7 +196,7 @@ namespace HookTester
 		{
 			try
 			{
-				if (he.Attacker?.baseEntity == testchicken && he.Victim?.baseEntity == testchicken)
+				if (he.Attacker?.baseEntity == TestChicken && he.Victim?.baseEntity == TestChicken)
 				{
 					// Server.BroadcastFrom(success, "The chicken hurt itself. (On_NPCHurt)");
 					NotWorkingHooks.Remove("On_NPCHurt");
@@ -208,7 +211,7 @@ namespace HookTester
 
 		public void On_NPCKilled(NPCDeathEvent de)
 		{
-			if (de.Attacker?.baseEntity == testchicken && de.Victim?.baseEntity == testchicken)
+			if (de.Attacker?.baseEntity == TestChicken && de.Victim?.baseEntity == TestChicken)
 			{
 				NotWorkingHooks.Remove("On_NPCKilled");
 				//Server.BroadcastFrom(success, "The chicken died. (On_NPCDied)");
@@ -222,7 +225,7 @@ namespace HookTester
 
 		public void On_PlayerAssisted(Player player)
 		{
-			if (player.basePlayer == testbot)
+			if (player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerAssisted");
 			}
@@ -242,7 +245,7 @@ namespace HookTester
 
 		public void On_PlayerDied(PlayerDeathEvent pde)
 		{
-			if (pde.Attacker?.baseEntity == testbot && pde.Victim?.basePlayer == testbot)
+			if (pde.Attacker?.baseEntity == TestBot && pde.Victim?.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerDied");
 				/*Player attacker = pde.Attacker.ToPlayer();
@@ -263,7 +266,7 @@ namespace HookTester
 
 		public void On_PlayerHealthChange(PlayerHealthChangeEvent phce)
 		{
-			if (phce.Player.basePlayer == testbot)
+			if (phce.Player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerHealthChange");
 			}
@@ -282,7 +285,7 @@ namespace HookTester
 
 		public void On_PlayerHurt(PlayerHurtEvent phe)
 		{
-			if (phe.Victim?.basePlayer == testbot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
+			if (phe.Victim?.basePlayer == TestBot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
 			{
 				NotWorkingHooks.Remove("On_PlayerHurt");
 				testbot.StartWounded();
@@ -307,7 +310,7 @@ namespace HookTester
 
 		public void On_PlayerSleep(Player player)
 		{
-			if (player.basePlayer == testbot)
+			if (player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerSleep");
 				Server.Broadcast(player.Name + " is going back to sleep!");
@@ -331,7 +334,7 @@ namespace HookTester
 
 		public void On_PlayerTakeRadiation(PlayerTakeRadsEvent ptre)
 		{
-			if (ptre.Victim?.basePlayer == testbot)
+			if (ptre.Victim?.basePlayer == TestBot)
 			{
 				if (NotWorkingHooks.Contains("On_PlayerTakeRadiation"))
 					NotWorkingHooks.Remove("On_PlayerTakeRadiation");
@@ -341,7 +344,7 @@ namespace HookTester
 
 		public void On_PlayerWakeUp(Player player)
 		{
-			if (player.basePlayer == testbot)
+			if (player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerWakeUp");
 				player.Message(player.Name + " just woke up");
@@ -350,7 +353,7 @@ namespace HookTester
 
 		public void On_PlayerWounded(Player player)
 		{
-			if (player.basePlayer == testbot)
+			if (player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_PlayerWounded");
 				player.Message(player.Name + " is wounded !");
@@ -374,7 +377,7 @@ namespace HookTester
 
 		public void On_Respawn(RespawnEvent re)
 		{
-			if (re.Player.basePlayer == testbot)
+			if (re.Player.basePlayer == TestBot)
 			{
 				NotWorkingHooks.Remove("On_Respawn");
 				re.GiveDefault = false;
