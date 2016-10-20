@@ -158,17 +158,17 @@ namespace HookTester
 
         public void On_LandmineArmed(Landmine l)
         {
-            Server.Broadcast(l.name + " has been armed");
+            Server.Broadcast("Landmine has been armed");
         }
 
         public void On_LandmineExploded(Landmine l)
         {
-            Server.Broadcast(l.name + " has exploded");
+            Server.Broadcast("Landmine has exploded");
         }
 
         public void On_LandmineTriggered(LandmineTriggerEvent lte)
         {
-            Server.Broadcast(lte.Landmine + " has been triggered by " + lte.Player.Name);
+            Server.Broadcast("Landmine has been triggered by " + lte.Player.Name);
         }
 
         public void On_LootingEntity(EntityLootEvent ele)
@@ -219,21 +219,24 @@ namespace HookTester
 
         public void On_PlayerAssisted(Player player)
         {
+<<<<<<< HEAD
 			if (player.basePlayer == testbot)
 			{
 				NotWorkingHooks.Remove("On_PlayerAssisted");
 			}
             // player.Message("Lucky you ! Somebody cured your wounds");
+=======
+            player.Message("Somebody cured your wounds");
+>>>>>>> origin/master
         }
 
         public void On_PlayerClothingChanged(PlayerClothingEvent pce)
         {
-            pce.Player.Message("You look so sexy now !");
+            pce.Player.Message("Your clothing has been changed");
         }
 
         public void On_PlayerConnected(Player player)
         {
-            player.Message("Welcome to our Server!");
             Server.Broadcast(player.Name + " has joined the Server!");
         }
 
@@ -279,6 +282,7 @@ namespace HookTester
 
         public void On_PlayerHurt(PlayerHurtEvent phe)
         {
+<<<<<<< HEAD
 			if (phe.Victim?.basePlayer == testbot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity)
             {
 				NotWorkingHooks.Remove("On_PlayerHurt");
@@ -286,6 +290,15 @@ namespace HookTester
 				testbot.StopWounded();
 				testbot.Kill();
 				// Server.BroadcastFrom(success, "On_PlayerHurt");
+=======
+            if (phe.Attacker != null)
+            {
+                phe.Victim.Message("You got hit by " + phe.Attacker.Name);
+            }
+            else
+            {
+                phe.Victim.Message("You got hit by something");
+>>>>>>> origin/master
             }
         }
 
@@ -398,7 +411,7 @@ namespace HookTester
 
         public void On_Shooting(ShootEvent se)
         {
-            Server.Broadcast(se.Player.Name + " just shot ");
+            Server.Broadcast(se.Player.Name + " just shot " + se.BaseProjectile.ShortPrefabName);
         }
 
         public void On_WeaponThrow(WeaponThrowEvent wte)
