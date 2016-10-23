@@ -39,18 +39,23 @@
     <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\rustserver\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Pluton.Core">
       <HintPath>..\..\..\..\..\rustserver\RustDedicated_Data\Managed\Pluton.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Pluton.Rust">
       <HintPath>..\..\..\..\..\rustserver\RustDedicated_Data\Managed\Pluton.Rust.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Rust.Data">
       <HintPath>..\..\..\..\..\rustserver\RustDedicated_Data\Managed\Rust.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\rustserver\RustDedicated_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
