@@ -134,9 +134,12 @@ namespace HookTester
 					TestBot.StartSleeping();
 					TestBot.EndSleeping();
 					TestBot.Hurt(new HitInfo(TestBot, TestBot, DamageType.Bite, 1));
-					TestBot.UpdateRadiation(1);
+					TestBot.StartWounded();
+					ce.User.Message("Help up the bot and heal it");
+					ce.User.Inventory.Add("Medical Syringe", 2);
+					ce.User.basePlayer.Hurt(10f, DamageType.Bite, ce.User.basePlayer);
+					ce.User.Message("Heal yourself too!");
 					TestBot.UpdateRadiation(0);
-					TestBot.RespawnAt(ce.User.Location, default(Quaternion));
 
 					ce.User.Inventory.Add(new InvItem("Wood", 2000));
 					ce.User.Inventory.Add(new InvItem("Wooden Door", 1));
@@ -404,13 +407,8 @@ namespace HookTester
 			if (phe.Victim?.basePlayer == TestBot && phe.Victim?.basePlayer == phe.Attacker?.baseEntity) {
 				SetHookWorking("On_PlayerHurt");
 				TestBot.StartWounded();
-				TestBot.StopWounded();
-				TestBot.Kill();
-			}
-			if (phe.Attacker != null) {
-				phe.Victim.Message("You got hit by " + phe.Attacker.Name);
-			} else {
-				phe.Victim.Message("You got hit by something");
+				//TestBot.StopWounded();
+				//TestBot.Kill();
 				Broadcast("On_PlayerHurt");
 			}
 		}
