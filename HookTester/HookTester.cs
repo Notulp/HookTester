@@ -513,6 +513,7 @@ namespace HookTester
 		public void On_ServerShutdown()
 		{
 			SetHookWorking("On_ServerShutdown");
+			DataStore.Save();
 			Broadcast("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
 		}
 
