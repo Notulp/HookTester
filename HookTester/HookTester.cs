@@ -239,6 +239,24 @@ namespace HookTester
 			Broadcast(due.Player.Name + " used a door");
 		}
 
+		public void On_EventTriggered(EventTriggeredEvent evt)
+		{
+			Broadcast(evt.Prefab + " has been triggered!");
+			SetHookWorking("On_EventTriggered");
+		}
+
+		public void On_ItemAdded(InventoryModEvent evt)
+		{
+			SetHookWorking("On_ItemAdded");
+			Broadcast(evt.Player.Name + " got " + evt.Item.Amount + "x" + evt.Item.Name);	
+		}
+
+		public void On_ItemRemoved(InventoryModEvent evt)
+		{
+			SetHookWorking("On_ItemRemoved");
+ 			Broadcast(evt.Player.Name + " lost " + evt.Item.Amount + "x" + evt.Item.Name);	
+		}
+
 		public void On_ItemLoseCondition(ItemConditionEvent ice)
 		{
 			SetHookWorking("On_ItemLoseCondition");
@@ -297,6 +315,12 @@ namespace HookTester
 		{
 			SetHookWorking("On_LootingPlayer");
 			Broadcast(ple.Target.Name + " is being looted by " + ple.Looter.Name);
+		}
+
+		public void On_NetworkableKill(BaseNetworkable baseNetworkable)
+		{
+			SetHookWorking("On_NetworkableKill");
+			Broadcast(baseNetworkable.ShortPrefabName + " got killed at: " + baseNetworkable.transform.position);
 		}
 
 		public void On_NPCHurt(NPCHurtEvent he)
