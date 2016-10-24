@@ -109,10 +109,17 @@ namespace HookTester
 		{
 			SetHookWorking("On_Command");
 
+			// nch = not called hooks, lets you broadcast them on the server
 			if (ce.Cmd == "nch" && ce.User.Admin) {
 				OutputResults();
 			}
 
+			// flush datastore entries, do it before you start testing new changes to hooks
+			if (ce.Cmd == "ftds" && ce.User.Admin) {
+				DataStore.Flush(GetType().ToString());
+			}
+
+			// start automated tests
 			if (ce.Cmd == "test" && ce.User.Admin) {
 				Broadcast("Initiating funcionality test.");
 
