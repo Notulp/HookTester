@@ -180,6 +180,12 @@ namespace HookTester
 			Broadcast(bpde.BuildingPart.Name + " got destroyed by " + bpde.Attacker.Name);
 		}
 
+		public void On_BuildingPartGradeChange(BuildingPartGradeChangeEvent bpgc)
+		{
+			SetHookWorking("On_BuildingPartGradeChange");
+			Broadcast(bpgc.Builder.Name + " changed grade of: " + bpgc.BuildingPart.Name + " to: " + bpgc.Grade + " (#" + bpgc.GradeInt + ")");
+		}
+
 		public void On_Chat(ChatEvent ce)
 		{
 			SetHookWorking("On_Chat");
