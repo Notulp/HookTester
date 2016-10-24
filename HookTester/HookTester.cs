@@ -152,25 +152,6 @@ namespace HookTester
 			}
 		}
 
-		private void OutputResults()
-		{
-			//Console.WriteLine(DataStore.GetTable(GetType().ToString()).Co + " hook(s) was/were not called during the tests: ");
-			Server.Broadcast("Hook(s) that was/were not called during the tests: ");
-
-			string[] nottested = (from hook in Pluton.Rust.Hooks.GetInstance().HookNames
-			                      where !GetHookWorking(hook)
-			                      select hook).ToArray();
-
-			//List<string> nottested = new List<string>();
-
-			/*foreach (DictionaryEntry hook in DataStore.GetTable(GetType().ToString()))
-            {
-				if (((bool)hook.Value) == false)
-					nottested.Add((string)hook.Key);
-            }*/
-			Server.Broadcast(String.Join(", ", nottested));
-		}
-
 		#endregion
 
 		#region Test Hooks
