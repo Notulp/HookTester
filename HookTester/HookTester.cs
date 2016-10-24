@@ -58,13 +58,20 @@ namespace HookTester
 		public void On_PluginInit()
 		{
 			// Creating a copy of the full list of hook names
-			if (DataStore.Get(GetType().ToString(), "Initialized") != null) {
-				foreach (var hook in Hooks.GetInstance().HookNames) {
+
+			foreach (var hook in Hooks.GetInstance().HookNames) {
+				if (DataStore[GetType().ToString(), hook] == null)
 					DataStore[GetType().ToString(), hook] = false;
-				}
 			}
 
-			DataStore.Add(GetType().ToString(), "Initialized", true);
+			var hookscopy = Hooks.GetInstance().HookNames.ToList();
+
+			foreach (var hook in Plugin.Hooks) {
+				hookscopy.Remove(hook.Name);
+			}
+
+			if (hookscopy.Count > 0)
+				Broadcast("Not testing hooks: " + String.Join(", ", hookscopy.ToArray()));
 
 			// Remove the ones that we can't programmatically test, from a command
 			SetHookWorking("On_PluginInit");
