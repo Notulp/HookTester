@@ -17,25 +17,43 @@ namespace HookTester
 		private BaseNPC TestChicken;
 		private BasePlayer TestBot;
 
-		private const string SUCCESS = "[Success]";
-		private const string FAIL = "[Fail]   ";
+		#region helper functions
 
-		#region Plugin Initialization
+		void Broadcast(string msg)
+		{
+			Console.WriteLine(msg);
+			Server.Broadcast(msg);
+		}
 
-		public void SetHookWorking(string hook)
+		bool GetHookWorking(string hook)
+		{
+			return (bool)DataStore[GetType().ToString(), hook] == true;
+		}
+
+		void SetHookWorking(string hook)
 		{
 			DataStore[GetType().ToString(), hook] = true;
 		}
 
-		public void SetHookNotWorking(string hook)
+		void SetHookNotWorking(string hook)
 		{
 			DataStore[GetType().ToString(), hook] = false;
 		}
 
-		public bool GetHookWorking(string hook)
+		void OutputResults()
 		{
-			return (bool)DataStore[GetType().ToString(), hook] == true;
+			Broadcast("Hook(s) that was/were not called during the tests: ");
+
+			string[] nottested = (from hook in Pluton.Rust.Hooks.GetInstance().HookNames
+								  where !GetHookWorking(hook)
+								  select hook).ToArray();
+
+			Broadcast(String.Join(", ", nottested));
 		}
+
+		#endregion
+
+		#region Plugin Initialization
 
 		public void On_PluginInit()
 		{
