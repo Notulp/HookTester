@@ -84,21 +84,21 @@ namespace HookTester
 
             NotCalledHooks.Remove("On_PlayerLoaded"); // ?
             */
-			Server.Broadcast("HookTester Initialized");
+			Broadcast("HookTester Initialized");
 		}
 
 		public void On_AllPluginLoaded()
 		{
 			SetHookWorking("On_AllPluginLoaded");
 
-			Server.Broadcast("All plugins loaded");
+			Broadcast("All plugins loaded");
 		}
 
 		public void On_PluginDeinit()
 		{
 			SetHookWorking("On_PluginDeinit");
 
-			Server.Broadcast("HookTester deinitialized");
+			Broadcast("HookTester deinitialized");
 		}
 
 		#endregion
@@ -114,7 +114,7 @@ namespace HookTester
 			}
 
 			if (ce.Cmd == "test" && ce.User.Admin) {
-				Server.BroadcastFrom("Pluton Tester", "Initiating funcionality test.");
+				Broadcast("Initiating funcionality test.");
 
 				//Server.Broadcast("#" + NotCalledHooks.Count + " hooks to be tested...");
 
@@ -171,25 +171,25 @@ namespace HookTester
 		public void On_BeingHammered(HammerEvent he)
 		{
 			SetHookWorking("On_BeingHammered");
-			Server.Broadcast(he.Victim.Name + " got hammered by " + he.Player.Name);
+			Broadcast(he.Victim.Name + " got hammered by " + he.Player.Name);
 		}
 
 		public void On_BuildingComplete(BuildingPart bp)
 		{
 			SetHookWorking("On_BuildingComplete");
-			Server.Broadcast("Building completed " + bp.Name);
+			Broadcast("Building completed " + bp.Name);
 		}
 
 		public void On_BuildingPartDemolished(BuildingPartDemolishedEvent bpde)
 		{
 			SetHookWorking("On_BuildingPartDemolished");
-			Server.Broadcast(bpde.BuildingPart.Name + " got demolished by " + bpde.Player.Name);
+			Broadcast(bpde.BuildingPart.Name + " got demolished by " + bpde.Player.Name);
 		}
 
 		public void On_BuildingPartDestroyed(BuildingPartDestroyedEvent bpde)
 		{
 			SetHookWorking("On_BuildingPartDestroyed");
-			Server.Broadcast(bpde.BuildingPart.Name + " got destroyed by " + bpde.Attacker.Name);
+			Broadcast(bpde.BuildingPart.Name + " got destroyed by " + bpde.Attacker.Name);
 		}
 
 		public void On_Chat(ChatEvent ce)
@@ -200,109 +200,109 @@ namespace HookTester
 		public void On_ClientAuth(AuthEvent ae)
 		{
 			SetHookWorking("On_ClientAuth");
-			Server.Broadcast(ae.Name + " authenticated on the server with IP " + ae.IP + " and ID " + ae.GameID);
+			Broadcast(ae.Name + " authenticated on the server with IP " + ae.IP + " and ID " + ae.GameID);
 		}
 
 		public void On_ClientConsole(ClientConsoleEvent cce)
 		{
 			SetHookWorking("On_ClientConsole");
-			Server.Broadcast(cce.User.Name + " used the command " + cce.Cmd + " on his client console");
+			Broadcast(cce.User.Name + " used the command " + cce.Cmd + " on his client console");
 		}
 
 		public void On_CombatEntityHurt(CombatEntityHurtEvent cehe)
 		{
 			SetHookWorking("On_CombatEntityHurt");
-			Server.Broadcast(cehe.Attacker.Name + " attacked " + cehe.Victim.Name);
+			Broadcast(cehe.Attacker.Name + " attacked " + cehe.Victim.Name);
 		}
 
 		public void On_CommandPermission(CommandPermissionEvent cpe)
 		{
 			SetHookWorking("On_CommandPermission");
-			Server.Broadcast(cpe.User.Name + " is trying to use the command " + cpe.Cmd);
+			Broadcast(cpe.User.Name + " is trying to use the command " + cpe.Cmd);
 		}
 
 		public void On_ConsumeFuel(ConsumeFuelEvent cfe)
 		{
 			SetHookWorking("On_ConsumeFuel");
-			Server.Broadcast(cfe.Item.Name + " consumed for fuel");
+			Broadcast(cfe.Item.Name + " consumed for fuel");
 		}
 
 		public void On_CorpseHurt(HurtEvent he)
 		{
 			SetHookWorking("On_CorpseHurt");
-			Server.Broadcast(he.Attacker.Name + " attacked a corpse with " + he.Weapon.Name);
+			Broadcast(he.Attacker.Name + " attacked a corpse with " + he.Weapon.Name);
 		}
 
 		public void On_DoorCode(DoorCodeEvent dce)
 		{
 			SetHookWorking("On_DoorCode");
-			Server.Broadcast(dce.Player.Name + " used code " + dce.Entered + " in the door with code " + dce.Code);
+			Broadcast(dce.Player.Name + " used code " + dce.Entered + " in the door with code " + dce.Code);
 		}
 
 		public void On_DoorUse(DoorUseEvent due)
 		{
 			SetHookWorking("On_DoorUse");
-			Server.Broadcast(due.Player.Name + " used a door");
+			Broadcast(due.Player.Name + " used a door");
 		}
 
 		public void On_ItemLoseCondition(ItemConditionEvent ice)
 		{
 			SetHookWorking("On_ItemLoseCondition");
-			Server.Broadcast(ice.Item.Name + " lost condition");
+			Broadcast(ice.Item.Name + " lost condition");
 		}
 
 		public void On_ItemPickup(ItemPickupEvent ipe)
 		{
 			SetHookWorking("On_ItemPickup");
-			Server.Broadcast(ipe.Item.Name + " was picked up by " + ipe.Player.Name);
+			Broadcast(ipe.Item.Name + " was picked up by " + ipe.Player.Name);
 		}
 
 		public void On_ItemRepaired(ItemRepairEvent ire)
 		{
 			SetHookWorking("On_ItemRepaired");
-			Server.Broadcast(ire.Player.Name + " repaired his " + ire.Item.Name);
+			Broadcast(ire.Player.Name + " repaired his " + ire.Item.Name);
 		}
 
 		public void On_ItemUsed(ItemUsedEvent iue)
 		{
 			SetHookWorking("On_ItemUsed");
-			Server.Broadcast(iue.Item.Name + " was used " + iue.Amount);
+			Broadcast(iue.Item.Name + " was used " + iue.Amount);
 		}
 
 		public void On_LandmineArmed(Landmine l)
 		{
 			SetHookWorking("On_LandmineArmed");
-			Server.Broadcast("Landmine has been armed");
+			Broadcast("Landmine has been armed");
 		}
 
 		public void On_LandmineExploded(Landmine l)
 		{
 			SetHookWorking("On_LandmineExploded");
-			Server.Broadcast("Landmine has exploded");
+			Broadcast("Landmine has exploded");
 		}
 
 		public void On_LandmineTriggered(LandmineTriggerEvent lte)
 		{
 			SetHookWorking("On_LandmineTriggered");
-			Server.Broadcast("Landmine has been triggered by " + lte.Player.Name);
+			Broadcast("Landmine has been triggered by " + lte.Player.Name);
 		}
 
 		public void On_LootingEntity(EntityLootEvent ele)
 		{
 			SetHookWorking("On_LootingEntity");
-			Server.Broadcast(ele.Target.Name + " is being looted by " + ele.Looter.Name);
+			Broadcast(ele.Target.Name + " is being looted by " + ele.Looter.Name);
 		}
 
 		public void On_LootingItem(ItemLootEvent ile)
 		{
 			SetHookWorking("On_LootingItem");
-			Server.Broadcast(ile.Target + " is being looted by " + ile.Looter.Name);
+			Broadcast(ile.Target + " is being looted by " + ile.Looter.Name);
 		}
 
 		public void On_LootingPlayer(PlayerLootEvent ple)
 		{
 			SetHookWorking("On_LootingPlayer");
-			Server.Broadcast(ple.Target.Name + " is being looted by " + ple.Looter.Name);
+			Broadcast(ple.Target.Name + " is being looted by " + ple.Looter.Name);
 		}
 
 		public void On_NPCHurt(NPCHurtEvent he)
@@ -310,7 +310,7 @@ namespace HookTester
 			try {
 				if (he.Attacker?.baseEntity == TestChicken && he.Victim?.baseEntity == TestChicken) {
 					SetHookWorking("On_NPCHurt");
-					// Server.BroadcastFrom(SUCCESS, "The chicken hurt itself. (On_NPCHurt)");
+					Broadcast("The chicken hurt itself.");
 				}
 			} catch (Exception ex) {
 				Logger.LogException(ex);
@@ -321,14 +321,14 @@ namespace HookTester
 		{
 			if (de.Attacker?.baseEntity == TestChicken && de.Victim?.baseEntity == TestChicken) {
 				SetHookWorking("On_NPCKilled");
-				//Server.BroadcastFrom(SUCCESS, "The chicken died. (On_NPCDied)");
+				Broadcast("The chicken died.");
 			}
 		}
 
 		public void On_Placement(BuildingEvent be)
 		{
 			SetHookWorking("On_Placement");
-			Server.Broadcast(be.BuildingPart.Name + " has been placed by " + be.Builder.Name);
+			Broadcast(be.BuildingPart.Name + " has been placed by " + be.Builder.Name);
 		}
 
 		public void On_PlayerAssisted(Player player)
@@ -336,19 +336,19 @@ namespace HookTester
 			if (player.basePlayer == TestBot) {
 				SetHookWorking("On_PlayerAssisted");
 			}
-			player.Message("Somebody cured your wounds");
+			Broadcast("Somebody cured your wounds");
 		}
 
 		public void On_PlayerClothingChanged(PlayerClothingEvent pce)
 		{
 			SetHookWorking("On_PlayerClothingChanged");
-			pce.Player.Message("Your clothing has been changed");
+			Broadcast("Your clothing has been changed");
 		}
 
 		public void On_PlayerConnected(Player player)
 		{
 			SetHookWorking("On_PlayerConnected");
-			Server.Broadcast(player.Name + " has joined the Server!");
+			Broadcast(player.Name + " has joined the Server!");
 		}
 
 		public void On_PlayerDied(PlayerDeathEvent pde)
@@ -359,18 +359,19 @@ namespace HookTester
                 Server.Broadcast(pde.Victim.Name + " was killed by " + attacker.Name);
                 World.SpawnAnimal("wolf", pde.Victim.Location);*/
 			}
+			Broadcast(pde.Victim.Name + " was killed by " + pde.Attacker.Name);
 		}
 
 		public void On_PlayerDisconnected(Player player)
 		{
 			SetHookWorking("On_PlayerDisconnected");
-			Server.Broadcast(player.Name + " has left the Server!");
+			Broadcast(player.Name + " has left the Server!");
 		}
 
 		public void On_PlayerGathering(GatherEvent ge)
 		{
 			SetHookWorking("On_PlayerGathering");
-			ge.Gatherer.Message("You collected " + ge.Amount + " " + ge.Resource.Name);
+			Broadcast(ge.Gatherer.Name + " collected " + ge.Amount + "x" + ge.Resource.baseEntity.ShortPrefabName);
 		}
 
 		public void On_PlayerHealthChange(PlayerHealthChangeEvent phce)
@@ -387,45 +388,45 @@ namespace HookTester
 				TestBot.StartWounded();
 				TestBot.StopWounded();
 				TestBot.Kill();
-				// Server.BroadcastFrom(SUCCESS, "On_PlayerHurt");
 			}
 			if (phe.Attacker != null) {
 				phe.Victim.Message("You got hit by " + phe.Attacker.Name);
 			} else {
 				phe.Victim.Message("You got hit by something");
+				Broadcast("On_PlayerHurt");
 			}
 		}
 
 		public void On_PlayerLoaded(Player player)
 		{
 			SetHookWorking("On_PlayerLoaded");
-			player.Message("You're loaded.");
+			Broadcast("You're loaded.");
 		}
 
 		public void On_PlayerSleep(Player player)
 		{
 			if (player.basePlayer == TestBot) {
 				SetHookWorking("On_PlayerSleep");
-				Server.Broadcast(player.Name + " is going back to sleep!");
+				Broadcast(player.Name + " is going back to sleep!");
 			}
 		}
 
 		public void On_PlayerStartCrafting(CraftEvent ce)
 		{
 			SetHookWorking("On_PlayerStartCrafting");
-			Server.Broadcast(ce.Crafter.Name + " is crafting " + ce.Target);
+			Broadcast(ce.Crafter.Name + " is crafting " + ce.Target);
 		}
 
 		public void On_PlayerSyringeOther(SyringeUseEvent sue)
 		{
 			SetHookWorking("On_PlayerSyringeOther");
-			Server.Broadcast(sue.User.Name + " syringed " + sue.Receiver.Name);
+			Broadcast(sue.User.Name + " syringed " + sue.Receiver.Name);
 		}
 
 		public void On_PlayerSyringeSelf(SyringeUseEvent sue)
 		{
 			SetHookWorking("On_PlayerSyringeSelf");
-			Server.Broadcast(sue.User.Name + " syringed himself");
+			Broadcast(sue.User.Name + " syringed himself");
 		}
 
 		public void On_PlayerTakeRadiation(PlayerTakeRadsEvent ptre)
@@ -433,7 +434,7 @@ namespace HookTester
 			if (ptre.Victim?.basePlayer == TestBot) {
 				SetHookWorking("On_PlayerTakeRadiation");
 			}
-			Server.Broadcast(ptre.Victim.Name + " has taken " + ptre.RadAmount + " radiation");
+			Broadcast(ptre.Victim.Name + " has taken " + ptre.RadAmount + " radiation");
 		}
 
 		public void On_PlayerWakeUp(Player player)
@@ -455,7 +456,7 @@ namespace HookTester
 		public void On_QuarryMining(MiningQuarry mq)
 		{
 			SetHookWorking("On_QuarryMining");
-			Server.Broadcast(mq.ShortPrefabName + " mined");
+			Broadcast(mq.ShortPrefabName + " mined");
 		}
 
 		public void On_Respawn(RespawnEvent re)
@@ -464,49 +465,49 @@ namespace HookTester
 				SetHookWorking("On_Respawn");
 				re.GiveDefault = false;
 			}
-			Server.Broadcast(re.Player.Name + " respawned on " + re.SpawnPos);
+			Broadcast(re.Player.Name + " respawned on " + re.SpawnPos);
 		}
 
 		public void On_RocketShooting(RocketShootEvent rse)
 		{
 			SetHookWorking("On_RocketShooting");
-			Server.Broadcast(rse.Player.Name + " shot a rocket");
+			Broadcast(rse.Player.Name + " shot a rocket");
 		}
 
 		public void On_ServerConsole(ServerConsoleEvent sce)
 		{
 			SetHookWorking("On_ServerConsole");
-			Server.Broadcast(sce.Cmd + " command used in server console");
+			Broadcast(sce.Cmd + " command used in server console");
 		}
 
 		public void On_ServerInit()
 		{
 			SetHookWorking("On_ServerInit");
-			Pluton.Core.Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
+			Broadcast("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
 		}
 
 		public void On_ServerSaved()
 		{
 			SetHookWorking("On_ServerSaved");
-			Server.Broadcast("Server data saved");
+			Broadcast("Server data saved");
 		}
 
 		public void On_ServerShutdown()
 		{
 			SetHookWorking("On_ServerShutdown");
-			Pluton.Core.Logger.Log("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
+			Broadcast("There are " + Server.SleepingPlayers.Count + " sleepers on the Server");
 		}
 
 		public void On_Shooting(ShootEvent se)
 		{
 			SetHookWorking("On_Shooting");
-			Server.Broadcast(se.Player.Name + " just shot " + se.BaseProjectile.ShortPrefabName);
+			Broadcast(se.Player.Name + " just shot " + se.BaseProjectile.ShortPrefabName);
 		}
 
 		public void On_WeaponThrow(WeaponThrowEvent wte)
 		{
 			SetHookWorking("On_WeaponThrow");
-			Server.Broadcast(wte.Player.Name + " threw a " + wte.Weapon.ShortPrefabName);
+			Broadcast(wte.Player.Name + " threw a " + wte.Weapon.ShortPrefabName);
 		}
 	}
 
